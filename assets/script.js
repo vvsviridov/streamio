@@ -14,9 +14,35 @@ const root = document.documentElement
 const upload = document.querySelector('.upload')
 const download = document.querySelector('.download')
 const container = document.querySelector('.container')
+const back = document.querySelector('#back')
 const storageRef = firebase.storage().ref()
 const fileId = ID()
+const fileUrl = document.location.origin + `/?ref=${fileId}`
 
+
+function ID() {
+    if (document.location.search !== '') {
+        return document.location.search.split('=')[1]    
+    }
+    return '_' + Math.random().toString(36).substr(2, 9)
+}
+
+
+function pageInit() {
+    if (document.location.search !== '') {
+        container.classList.add('active')
+        back.className = 'fas fa-cloud-download-alt'
+        root.style.setProperty('--progress', 100)
+        download.addEventListener('click', (e) => {
+            downloadFileFromStorage()
+        })
+        return   
+    }
+    back.className = 'fas fa-copy'
+    download.addEventListener('click', (e) => {
+        copyToClipboard()
+    })
+}
 
 function uploadFile(file) {
     const ref = storageRef.child(fileId)
@@ -65,11 +91,12 @@ function setUploadProgress({ bytesTransferred, totalBytes }) {
     let progress = ~~(bytesTransferred / totalBytes * 100)
     root.style.setProperty('--progress', progress)
     upload.setAttribute('progress', progress + '%')
-    download.setAttribute('progress', progress + '%')
+    // download.setAttribute('progress', progress + '%')
 }
 
 
 function successfulUpload(ref, fileName) {
+    download.setAttribute('progress', 'Copy to clipboard')
     container.classList.add('active')
     history.replaceState(undefined, '', `?ref=${fileId}`)
     ref.updateMetadata({
@@ -102,6 +129,16 @@ async function getMetadata(fileRef) {
 }
 
 
+function copyToClipboard(text) {
+    const dummy = document.createElement("textarea");
+    document.body.appendChild(dummy);
+    dummy.value = fileUrl;
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
+}
+
+
 upload.addEventListener('drop', (e) => {
     uploadFile(e.dataTransfer.files[0])
     e.preventDefault()
@@ -118,16 +155,4 @@ upload.addEventListener('dragover', (e) => {
 })
 
 
-download.addEventListener('click', (e) => {
-    downloadFileFromStorage()
-})
-
-
-function ID() {
-    if (document.location.search !== '') {
-        container.classList.add('active')
-        root.style.setProperty('--progress', 100)
-        return document.location.search.split('=')[1]    
-    }
-    return '_' + Math.random().toString(36).substr(2, 9)
-}
+pageInit()
