@@ -44,6 +44,7 @@ function pageInit() {
     })
 }
 
+
 function uploadFile(file) {
     const ref = storageRef.child(fileId)
     const uploadTask = ref.put(file)
@@ -58,6 +59,7 @@ function uploadFile(file) {
 
 async function downloadFileFromStorage() {
     const fileRef = storageRef.child(fileId)
+    console.log(fileRef)
     const metadata = await getMetadata(fileRef)
     const { contentType, customMetadata: { fileName } } = metadata
     const url = await fileRef.getDownloadURL()
@@ -98,6 +100,7 @@ function setUploadProgress({ bytesTransferred, totalBytes }) {
 function successfulUpload(ref, fileName) {
     download.setAttribute('progress', 'Copy to clipboard')
     container.classList.add('active')
+    root.style.setProperty('--progress', 0)
     history.replaceState(undefined, '', `?ref=${fileId}`)
     ref.updateMetadata({
         customMetadata: {
@@ -129,14 +132,30 @@ async function getMetadata(fileRef) {
 }
 
 
-function copyToClipboard(text) {
-    const dummy = document.createElement("textarea");
-    document.body.appendChild(dummy);
-    dummy.value = fileUrl;
-    dummy.select();
-    document.execCommand("copy");
-    document.body.removeChild(dummy);
+function copyToClipboard() {
+    const textarea = document.createElement('textarea')
+    document.body.appendChild(textarea)
+    textarea.value = fileUrl
+    textarea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textarea)
+    document.location.replace('/')
 }
+
+
+function openFileDialog() {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.visible = false
+    document.body.appendChild(input)
+    input.onchange = () => uploadFile(input.files[0])
+    input.click()
+    document.body.removeChild(input)
+}
+
+upload.addEventListener('click', (e) => {
+    openFileDialog()
+})
 
 
 upload.addEventListener('drop', (e) => {
