@@ -53,7 +53,7 @@ async function initServiceWorker() {
           const reg = await navigator.serviceWorker.register('/assets/serviceworker.js')
           console.log('Service worker register success', reg)
         } catch (e) {
-          console.log('Service worker register fail')
+          console.error('Service worker register fail')
         }
     }
 }
