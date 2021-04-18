@@ -28,7 +28,9 @@ function ID() {
 }
 
 
-function pageInit() {
+async function pageInit() {
+    await initServiceWorker()
+
     if (document.location.search !== '') {
         container.classList.add('active')
         back.className = 'fas fa-cloud-download-alt'
@@ -42,6 +44,18 @@ function pageInit() {
     download.addEventListener('click', (e) => {
         copyToClipboard()
     })
+}
+
+
+async function initServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        try {
+          const reg = await navigator.serviceWorker.register('/assets/serviceworker.js')
+          console.log('Service worker register success', reg)
+        } catch (e) {
+          console.log('Service worker register fail')
+        }
+    }
 }
 
 
