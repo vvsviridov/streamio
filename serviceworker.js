@@ -1,13 +1,13 @@
 const staticCacheName = 's-streamio-v1'
 
 const assetUrls = [
-  '../index.html',
-  'script.js',
-  'style.css',
-  'icon-192x192.png',
-  'icon-256x256.png',
-  'icon-384x384.png',
-  'icon-512x512.png'
+  'index.html',
+  '/assets/script.js',
+  '/assets/style.css',
+  '/assets/icon-192x192.png',
+  '/assets/icon-256x256.png',
+  '/assets/icon-384x384.png',
+  '/assets/icon-512x512.png'
 ]
 
 self.addEventListener('install', async event => {

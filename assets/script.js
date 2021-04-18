@@ -50,7 +50,7 @@ async function pageInit() {
 async function initServiceWorker() {
     if ('serviceWorker' in navigator) {
         try {
-          const reg = await navigator.serviceWorker.register('/assets/serviceworker.js')
+          const reg = await navigator.serviceWorker.register('/serviceworker.js')
           console.log('Service worker register success', reg)
         } catch (e) {
           console.error('Service worker register fail')
