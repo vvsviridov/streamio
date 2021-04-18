@@ -1,4 +1,4 @@
-const staticCacheName = 's-streamio-v1'
+const staticCacheName = 's-streamio-v2'
 
 const assetUrls = [
   'index.html',

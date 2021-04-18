@@ -28,9 +28,7 @@ function ID() {
 }
 
 
-async function pageInit() {
-    await initServiceWorker()
-
+function pageInit() {
     if (document.location.search !== '') {
         container.classList.add('active')
         back.className = 'fas fa-cloud-download-alt'
@@ -44,18 +42,6 @@ async function pageInit() {
     download.addEventListener('click', (e) => {
         copyToClipboard()
     })
-}
-
-
-async function initServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        try {
-          const reg = await navigator.serviceWorker.register('/serviceworker.js')
-          console.log('Service worker register success')
-        } catch (e) {
-          console.error('Service worker register fail')
-        }
-    }
 }
 
 
@@ -188,4 +174,16 @@ upload.addEventListener('dragover', (e) => {
 })
 
 
-pageInit()
+window.addEventListener('load', async () => {
+    if ('serviceWorker' in navigator) {
+        try {
+          const reg = await navigator.serviceWorker.register('/serviceworker.js')
+          console.log('Service worker register success')
+        } catch (e) {
+          console.error('Service worker register fail')
+        }
+    }
+    pageInit()
+})
+
+
