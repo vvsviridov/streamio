@@ -5,8 +5,8 @@
   "background_color": "rgba(0,0,0,0.1)",
   "display": "standalone",
   "orientation": "portrait",
-  "scope": "/assets/",
-  "start_url": "/assets/",
+  "scope": "/",
+  "start_url": "/",
   "icons": [
     {
       "src": "/assets/icon-192x192.png",

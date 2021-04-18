@@ -26,6 +26,7 @@ self.addEventListener('activate', async event => {
 
 self.addEventListener('fetch', event => {
   const {request} = event
+  console.log(request.url)
   event.respondWith(cacheFirst(request))
 })
 
