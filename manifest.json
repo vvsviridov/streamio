@@ -1,12 +1,11 @@
 {
   "name": "Stream.io",
   "short_name": "streamio",
-  "theme_color": "rgba(0,0,0,0.5)",
-  "background_color": "rgba(0,0,0,0.1)",
+  "theme_color": "darkgrey",
+  "background_color": "lightgrey",
   "display": "standalone",
   "orientation": "portrait",
-  "scope": "/",
-  "start_url": "/",
+  "start_url": ".",
   "icons": [
     {
       "src": "/assets/icon-192x192.png",
