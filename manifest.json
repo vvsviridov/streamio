@@ -1,8 +1,8 @@
 {
   "name": "Stream.io",
   "short_name": "streamio",
-  "theme_color": "darkgrey",
-  "background_color": "lightgrey",
+  "theme_color": "black",
+  "background_color": "darkgrey",
   "display": "standalone",
   "orientation": "portrait",
   "start_url": ".",
