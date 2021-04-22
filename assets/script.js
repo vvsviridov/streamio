@@ -33,7 +33,7 @@ function pageInit() {
         container.classList.add('active')
         back.className = 'fas fa-cloud-download-alt'
         root.style.setProperty('--progress', 100)
-        download.addEventListener('click', (e) => {
+        download.addEventListener('click', () => {
             downloadFileFromStorage()
         })
         return   
@@ -59,8 +59,8 @@ function uploadFile(file) {
 
 async function downloadFileFromStorage() {
     const fileRef = storageRef.child(fileId)
-    console.log(fileRef)
     const metadata = await getMetadata(fileRef)
+    if (!metadata) return 
     const { contentType, customMetadata: { fileName } } = metadata
     const url = await fileRef.getDownloadURL()
     downloadFile(url, fileName, contentType)
@@ -71,7 +71,10 @@ function downloadFile(url, fileName, contentType) {
     const xhr = new XMLHttpRequest()
     xhr.responseType = 'blob'
     xhr.onload = () => downloadComplete(xhr.response, fileName, contentType)
+    xhr.onloadend = () => checkDownloadStatus(xhr.status)
     xhr.onprogress = (e) => setDownloadProgress(e)
+    xhr.onerror = () => showError()
+    xhr.on
     xhr.open('GET', url)
     xhr.send()
 }
@@ -127,8 +130,18 @@ function downloadComplete(blob, fileName, contentType) {
 }
 
 
+function checkDownloadStatus(status) {
+    if (status !== 200) {
+        showError()
+    }
+}
+
 async function getMetadata(fileRef) {
-    return await fileRef.getMetadata()
+    try {
+        return await fileRef.getMetadata()
+    } catch (error) {
+        showError()        
+    }
 }
 
 
@@ -151,6 +164,14 @@ function openFileDialog() {
     input.onchange = () => uploadFile(input.files[0])
     input.click()
     document.body.removeChild(input)
+}
+
+
+function showError() {
+    back.className = 'fas fa-exclamation-triangle'
+    download.classList.add('error')
+    root.style.setProperty('--progress', 0)
+    download.addEventListener('click', () => document.location.replace('/'))
 }
 
 upload.addEventListener('click', (e) => {
@@ -177,7 +198,7 @@ upload.addEventListener('dragover', (e) => {
 window.addEventListener('load', async () => {
     if ('serviceWorker' in navigator) {
         try {
-          const reg = await navigator.serviceWorker.register('/serviceworker.js')
+          const reg = await navigator.serviceWorker.register('../serviceworker.js')
           console.log('Service worker register success')
         } catch (e) {
           console.error('Service worker register fail')
@@ -185,5 +206,3 @@ window.addEventListener('load', async () => {
     }
     pageInit()
 })
-
-
