@@ -74,7 +74,6 @@ function downloadFile(url, fileName, contentType) {
     xhr.onloadend = () => checkDownloadStatus(xhr.status)
     xhr.onprogress = (e) => setDownloadProgress(e)
     xhr.onerror = () => showError()
-    xhr.on
     xhr.open('GET', url)
     xhr.send()
 }
@@ -96,7 +95,6 @@ function setUploadProgress({ bytesTransferred, totalBytes }) {
     let progress = ~~(bytesTransferred / totalBytes * 100)
     root.style.setProperty('--progress', progress)
     upload.setAttribute('progress', progress + '%')
-    // download.setAttribute('progress', progress + '%')
 }
 
 
