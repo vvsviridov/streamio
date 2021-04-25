@@ -45,7 +45,8 @@ function pageInit() {
 }
 
 
-function uploadFile(file) {
+async function uploadFile(file) {
+    await sendNotification(`Upload of ${file.name} started.`)
     const ref = storageRef.child(fileId)
     const uploadTask = ref.put(file)
     uploadTask.on(
@@ -58,6 +59,7 @@ function uploadFile(file) {
 
 
 async function downloadFileFromStorage() {
+    await sendNotification(`Download started.`)
     const fileRef = storageRef.child(fileId)
     const metadata = await getMetadata(fileRef)
     if (!metadata) return 
@@ -98,7 +100,7 @@ function setUploadProgress({ bytesTransferred, totalBytes }) {
 }
 
 
-function successfulUpload(ref, fileName) {
+async function successfulUpload(ref, fileName) {
     download.setAttribute('progress', 'Copy to clipboard')
     container.classList.add('active')
     root.style.setProperty('--progress', 0)
@@ -108,6 +110,7 @@ function successfulUpload(ref, fileName) {
             fileName
         }
     })
+    await sendNotification(`Upload of ${fileName} finished.`)
 }
 
 
@@ -121,8 +124,9 @@ function setDownloadProgress(e) {
 }
 
 
-function downloadComplete(blob, fileName, contentType) {
+async function downloadComplete(blob, fileName, contentType) {
     saveFile(blob, fileName, contentType)
+    await sendNotification(`Download of ${fileName} finished.`)
     container.classList.remove('active')
     document.location.replace('/')
 }
@@ -143,12 +147,13 @@ async function getMetadata(fileRef) {
 }
 
 
-function copyToClipboard() {
+async function copyToClipboard() {
     const textarea = document.createElement('textarea')
     document.body.appendChild(textarea)
     textarea.value = fileUrl
     textarea.select()
     document.execCommand('copy')
+    await sendNotification(`Copied to clipboard ${fileUrl}.`)
     document.body.removeChild(textarea)
     document.location.replace('/')
 }
@@ -159,17 +164,29 @@ function openFileDialog() {
     input.type = 'file'
     input.visible = false
     document.body.appendChild(input)
-    input.onchange = () => uploadFile(input.files[0])
+    input.onchange = async () => uploadFile(input.files[0])
     input.click()
     document.body.removeChild(input)
 }
 
 
-function showError() {
+async function showError() {
     back.className = 'fas fa-exclamation-triangle'
     download.classList.add('error')
     root.style.setProperty('--progress', 0)
     download.addEventListener('click', () => document.location.replace('/'))
+    await sendNotification('Something\'s going wrong!')
+}
+
+
+async function sendNotification(message) {
+    const notificationPermission =  await Notification.requestPermission()
+    if (notificationPermission === 'granted') {
+        new Notification('Stream.io', {
+            body: message,
+            icon: './assets/icon-192x192.png'
+        })
+    }
 }
 
 upload.addEventListener('click', (e) => {
@@ -177,9 +194,9 @@ upload.addEventListener('click', (e) => {
 })
 
 
-upload.addEventListener('drop', (e) => {
-    uploadFile(e.dataTransfer.files[0])
+upload.addEventListener('drop', async (e) => {
     e.preventDefault()
+    await uploadFile(e.dataTransfer.files[0])
 })
 
 
