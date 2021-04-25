@@ -149,6 +149,7 @@ async function getMetadata(fileRef) {
 
 async function copyToClipboard() {
     const textarea = document.createElement('textarea')
+    textarea.visible = false
     document.body.appendChild(textarea)
     textarea.value = fileUrl
     textarea.select()
