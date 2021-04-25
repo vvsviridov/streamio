@@ -46,7 +46,7 @@ function pageInit() {
 
 
 async function uploadFile(file) {
-    await sendNotification(`Upload of ${file.name} started.`)
+    await sendNotification('Upload started', file.name)
     const ref = storageRef.child(fileId)
     const uploadTask = ref.put(file)
     uploadTask.on(
@@ -59,11 +59,11 @@ async function uploadFile(file) {
 
 
 async function downloadFileFromStorage() {
-    await sendNotification(`Download started.`)
     const fileRef = storageRef.child(fileId)
     const metadata = await getMetadata(fileRef)
     if (!metadata) return 
     const { contentType, customMetadata: { fileName } } = metadata
+    await sendNotification('Download started', fileName)
     const url = await fileRef.getDownloadURL()
     downloadFile(url, fileName, contentType)
 }
@@ -110,7 +110,7 @@ async function successfulUpload(ref, fileName) {
             fileName
         }
     })
-    await sendNotification(`Upload of ${fileName} finished.`)
+    await sendNotification('Upload finished',fileName)
 }
 
 
@@ -126,7 +126,7 @@ function setDownloadProgress(e) {
 
 async function downloadComplete(blob, fileName, contentType) {
     saveFile(blob, fileName, contentType)
-    await sendNotification(`Download of ${fileName} finished.`)
+    await sendNotification('Download finished', fileName)
     container.classList.remove('active')
     document.location.replace('/')
 }
@@ -154,7 +154,7 @@ async function copyToClipboard() {
     textarea.value = fileUrl
     textarea.select()
     document.execCommand('copy')
-    await sendNotification(`Copied to clipboard ${fileUrl}.`)
+    await sendNotification('Copied to clipboard', fileUrl)
     document.body.removeChild(textarea)
     document.location.replace('/')
 }
@@ -180,10 +180,10 @@ async function showError() {
 }
 
 
-async function sendNotification(message) {
+async function sendNotification(title = 'Streamio', message) {
     const notificationPermission =  await Notification.requestPermission()
     if (notificationPermission === 'granted') {
-        new Notification('Stream.io', {
+        new Notification(title, {
             body: message,
             icon: './assets/icon-192x192.png'
         })
