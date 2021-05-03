@@ -52,7 +52,7 @@ async function uploadFile(file) {
     uploadTask.on(
         'state_changed', 
         (snapshot) => setUploadProgress(snapshot), 
-        (error) => console.error(error), 
+        () => showError(), 
         () => successfulUpload(ref, file.name)
     )
 }
